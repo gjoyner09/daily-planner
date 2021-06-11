@@ -15,6 +15,7 @@ function Weather() {
     const [location, setLocation] = useState(null)
     const [searchText, setSearchText] = useState('')
     const [searchLocation, setSearchLocation] = useState('')
+    const [celcius, setCelcius] = useState(true)
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((data) => {
@@ -61,6 +62,20 @@ function Weather() {
         })
     }
     
+    const toggleCandF = () => {
+        const tempButton = document.getElementById("cToF")
+        tempButton.innerHTML = celcius ? "Switch to Celcius" : "Swtich to Fahrenheit"
+        setCelcius(!celcius)
+    }
+    
+    const setTemp = (temp) => {
+        if (celcius) {
+            return temp
+        } else {
+            return temp * 9/5 + 32
+        }
+    }
+    
     return (
       <div className="Weather" style={styles}>
           <form onSubmit={handleSubmit}>
@@ -68,6 +83,7 @@ function Weather() {
                 <input type="text" id="weatherLocation" name="weatherLocation" onChange={handleChange}/>
                 <input type="submit" />
             </form>
+            <button id="cToF" onClick={toggleCandF}>Switch to Fahrenheit</button>
           {!isLoaded &&
             <>
              <div className="loader"></div>
@@ -79,7 +95,7 @@ function Weather() {
                     {location && location.city && <h1>Weather for {location.city}, {location.country}</h1>}    
                     {items.map(function(item, index){
                         return (
-                            <Forecast key={index} index={index} cloudcover={item.weather} temperatureMax={item.temp2m.max} temperatureMin={item.temp2m.min} />
+                            <Forecast key={index} index={index} cloudcover={item.weather} temperatureMax={Math.round(setTemp(item.temp2m.max))} temperatureMin={Math.round(setTemp(item.temp2m.min))} />
                         )
                         })
                     }
