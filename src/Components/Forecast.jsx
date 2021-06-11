@@ -26,6 +26,7 @@ function Forecast(props) {
 
             <h5>Min Temperature</h5>
             <p>{props.temperatureMin}</p>
+    
         </div>
     )
 }
