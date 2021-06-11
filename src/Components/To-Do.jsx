@@ -20,14 +20,28 @@ const Todo = () => {
         setNewItem('')
     }
     
+    const strikethrough = ( index) => {
+        console.log(index)
+        const item = document.getElementById(`item${index}`)
+        item.classList.toggle('strikethrough')
+    }
+    
+    const deleteItem = (index) => {
+        const newTodo = todo.filter((item, origIndex) => origIndex !== index)
+        localStorage.setItem('todo', JSON.stringify(newTodo))
+        setTodo(newTodo)
+    }
+    
     return (
         <>
+            <h1>To Do List</h1>
             <ul>
                 {todo.length > 0 && todo.map((item, index) => {
                     return (
                         <div key={index} >
-                            <li>{item}</li>
-                            <TodoDelete todo={todo} setTodo={setTodo} index={index} />
+                            <li id={`item${index}`}>{item}</li>
+                            <button onClick={() => strikethrough(index)}>Completed</button>
+                            <button onClick={() => deleteItem(index)}>Delete</button>
                         </div>
                     )
                 })}
@@ -38,17 +52,6 @@ const Todo = () => {
                 <input type="submit" />
             </form>
         </>
-    )
-}
-
-const TodoDelete = ({todo, setTodo, index}) => {
-    const handleClick = () => {
-        const newTodo = todo.filter((item, origIndex) => origIndex !== index)
-        localStorage.setItem('todo', JSON.stringify(newTodo))
-        setTodo(newTodo)
-    }
-    return (
-        <button onClick={handleClick}>Remove</button>
     )
 }
 
