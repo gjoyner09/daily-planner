@@ -27,12 +27,14 @@ function Weather() {
         position && fetch("http://www.7timer.info/bin/api.pl?lon=" + position.longitude + "&lat=" + position.latitude + "&product=civillight&output=json")
         .then(res => res.json())
         .then(
+
             (result) => {
                 setIsLoaded(true);
                 setItems(result.dataseries);
             }
         )
         .catch((error) => console.log(error))
+
         
         position && fetch(`https://geocode.xyz/${position.latitude},${position.longitude}?geoit=json`)
         .then(res => res.json())
