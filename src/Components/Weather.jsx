@@ -32,6 +32,7 @@ function Weather() {
           (result) => {
             setIsLoaded(true);
             setItems(result.dataseries);
+
           },
           (error) => {
             setIsLoaded(true);
@@ -39,7 +40,7 @@ function Weather() {
           }
         )
   
-  
+          
         
     }, [])
   
