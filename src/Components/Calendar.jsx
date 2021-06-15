@@ -4,6 +4,7 @@ import ReactDOMServer from 'react-dom/server';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
+import styled from 'styled-components'
 
 
 
@@ -18,6 +19,18 @@ const customStyles = {
       zIndex: '-1'
     }
 };
+
+const CalendarSpan = styled.span`
+  margin-top: 2rem;
+  width: 65%;
+`
+
+const CalendarWrapper = styled.span`
+  width: 100%;
+  margin-top: 2rem;
+  margin-right: 2rem;
+  margin-left: 2rem;
+`
   
 Modal.setAppElement('body')
 
@@ -122,7 +135,7 @@ const Calendar = () => {
       
     return (
 
-        <div>
+        <CalendarSpan>
 
         <Modal
           isOpen={modalIsOpen}
@@ -134,10 +147,10 @@ const Calendar = () => {
 
           <button onClick={closeModal}>close</button>
           <div>EVENT</div>
-          <p>{eventTitle}</p>
-          <p>{eventStart}</p>
-          <p>{eventEnd}</p>
-          <p>{eventDescription}</p>
+          <p>Title: {eventTitle}</p>
+          <p>Start: {new Date(eventStart).toString().substring(0,24)}</p>
+          <p>End: {new Date(eventEnd).toString().substring(0,24)}</p>
+          <p>Description: {eventDescription}</p>
           <form>
             <button onClick={deleteEvent}>DELETE</button>
           </form>
@@ -149,23 +162,24 @@ const Calendar = () => {
 
 
 
-
-        <FullCalendar
-            plugins={[ dayGridPlugin, interactionPlugin ]}
-            headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,dayGridWeek,dayGridDay"
-            }}
-            initialView="dayGridWeek"
-            events={events}
-            dateClick={handleDateClick}
-            eventClick={renderEventContent}
-        />
+          <CalendarWrapper>
+            <FullCalendar
+                plugins={[ dayGridPlugin, interactionPlugin ]}
+                headerToolbar={{
+                    left: "prev,next today",
+                    center: "title",
+                    right: "dayGridMonth,dayGridWeek,dayGridDay"
+                }}
+                initialView="dayGridWeek"
+                events={events}
+                dateClick={handleDateClick}
+                eventClick={renderEventContent}
+            />
+          </CalendarWrapper>
 
       
 
-        </div>
+        </CalendarSpan>
         
 
     )
