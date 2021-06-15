@@ -69,13 +69,11 @@ const LoadSpan = styled.span`
 `
 
 function Weather() {
-    const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [items, setItems] = useState([]);
     const [position, setPosition] = useState(null)
     const [location, setLocation] = useState(null)
     const [searchText, setSearchText] = useState('')
-    const [searchLocation, setSearchLocation] = useState('')
     const [celcius, setCelcius] = useState(true)
 
     useEffect(() => {

@@ -1,28 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import Modal from 'react-modal';
-import ReactDOMServer from 'react-dom/server';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import styled from 'styled-components'
 
-
-
-const customStyles = {
-    content : {
-      top                   : '50%',
-      left                  : '50%',
-      right                 : 'auto',
-      bottom                : 'auto',
-      marginRight           : '-50%',
-      transform             : 'translate(-50%, -50%)',
-      zIndex: '-1'
-    }
-};
-
 const CalendarSpan = styled.span`
   margin-top: 2rem;
-  width: 65%;
+  width: 65%; 
 `
 
 const CalendarWrapper = styled.span`
@@ -34,9 +19,6 @@ const CalendarWrapper = styled.span`
   
 Modal.setAppElement('body')
 
-
-
-
 const Calendar = () => {
     const initialEvents = localStorage.getItem('events')
     const [events, setEvents] = useState(initialEvents ? JSON.parse(initialEvents) : [])
@@ -45,8 +27,6 @@ const Calendar = () => {
     const [eventStart, setEventStart] = useState('')
     const [eventEnd, setEventEnd] = useState('')
     const [eventDescription, setEventDescription] = useState('')
-    
-    
     
     const addEvent = (event) => {
         const newEvents = [
@@ -86,32 +66,23 @@ const Calendar = () => {
         openModal()
     }
 
-
     const deleteEvent = () => {
         const newEvents = events.filter(event => event.id !== Number(eventInfo.event._def.publicId))
         localStorage.setItem('events', JSON.stringify(newEvents))
         setEvents(newEvents)
-
         setEventInfo(null)                
     }
-
-
     
     useEffect(()=>{
         if (eventInfo!==null) {
-
             setEventTitle(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].title)
             setEventStart(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].start)
             setEventEnd(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].end)
             setEventDescription(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].description)
-
         }
-    })
+    },[])
 
-
-
-    var subtitle;
-    const [modalIsOpen,setIsOpen] = React.useState(false);
+    const [modalIsOpen,setIsOpen] = useState(false);
     function openModal() {
       setIsOpen(true);
     }
@@ -124,27 +95,40 @@ const Calendar = () => {
     function closeModal(){
       setIsOpen(false);
     }
-
-
-
-    
-
-
-
-    
       
     return (
-
         <CalendarSpan>
-
         <Modal
           isOpen={modalIsOpen}
           onAfterOpen={afterOpenModal}
           onRequestClose={closeModal}
-        //   style={customStyles}
+          style={{
+            overlay: {
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.75)'
+            },
+            content: {
+              position: 'absolute',
+              top: '20%',
+              left: '20%',
+              right: '20%',
+              bottom: '20%',
+              border: '1px solid #ccc',
+              background: '#fff',
+              overflow: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              borderRadius: '10px',
+              outline: 'none',
+              padding: '20px',
+            },
+            overlay: {zIndex: 10}
+          }}
           contentLabel="Event"
         >
-
           <button onClick={closeModal}>close</button>
           <div>EVENT</div>
           <p>Title: {eventTitle}</p>

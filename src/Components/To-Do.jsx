@@ -1,42 +1,41 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
+const ToDoSpan = styled.span`
+margin-top: 2rem;
+width: 35%;
+`
+
+const ToDoHeader = styled.h3`
+width: 100%;
+height: 30px;
+margin-bottom: 0.5rem;
+`
+
+const ToDoList = styled.div`
+width: 100%;
+margin-bottom: 1rem;
+`
+
+const ToDoItem = styled.div`
+width: 100%;
+display: flex;
+justify-content: space-between;
+background-color: rgba(255, 255, 255, 0.5);
+`
+
+const ToDoInterior = styled.span`
+padding-right: 1rem;
+padding-left: 1rem;
+`
+
+const Form = styled.form`
+float: left;
+padding-left: 1rem;
+padding-right: 1rem;
+`
+
 const Todo = () => {
-    
-    const ToDoSpan = styled.span`
-        margin-top: 2rem;
-        width: 35%;
-    `
-    
-    const ToDoHeader = styled.h3`
-        width: 100%;
-        height: 30px;
-        margin-bottom: 0.5rem;
-    `
-    
-    const ToDoList = styled.div`
-        width: 100%;
-        margin-bottom: 1rem;
-    `
-    
-    const ToDoItem = styled.div`
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        background-color: rgba(255, 255, 255, 0.5);
-    `
-    
-    const ToDoInterior = styled.span`
-        padding-right: 1rem;
-        padding-left: 1rem;
-    `
-    
-    const Form = styled.form`
-        float: left;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    `
-    
     
     const initialEvents = localStorage.getItem('todo')
     const [todo, setTodo] = useState(initialEvents ? JSON.parse(initialEvents) : [])
