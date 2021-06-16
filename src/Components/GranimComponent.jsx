@@ -1,6 +1,7 @@
 import Granim from 'granim'
 import { useEffect } from 'react';
 import styled from 'styled-components'
+import background from '../Img/background.jpg'
 
 const Canvas = styled.canvas`
     position: fixed;
@@ -17,24 +18,32 @@ const Canvas = styled.canvas`
 const GranimComponent = () => {
 
     useEffect(()=> {
-        const granimInstance = new Granim({
-            element: '#canvas-basic',
-            direction: 'diagonal',
+        var granimInstance = new Granim({
+            element: '#canvas-image-blending',
+            direction: 'top-bottom',
             isPausedWhenNotInView: true,
+            image : {
+                source: background,
+                blendingMode: 'multiply',
+                position: ['center', 'center'],
+                stretchMode: ['stretch-if-smaller', 'stretch-if-smaller']
+            },
             states : {
                 "default-state": {
                     gradients: [
-                        ['#ff9966', '#ff5e62'],
-                        ['#00F260', '#0575E6'],
-                        ['#e1eec3', '#f05053']
-                    ]
+                        ['#29323c', '#485563'],
+                        ['#FF6B6B', '#556270'],
+                        ['#80d3fe', '#7ea0c4'],
+                        ['#f0ab51', '#eceba3']
+                    ],
+                    transitionSpeed: 7000
                 }
             }
         });
     }, [])
     
     return (
-        <Canvas id="canvas-basic"></Canvas>
+        <Canvas id="canvas-image-blending"></Canvas>
     )
 }
 
