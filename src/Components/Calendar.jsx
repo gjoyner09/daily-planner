@@ -4,19 +4,31 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import styled from 'styled-components'
+import Button from './Button'
 
 const CalendarSpan = styled.span`
   margin-top: 2rem;
   width: 65%; 
+  font-family: 'Manrope', sans-serif;
+  font-weight: bold;
+  
+  @media only screen and (max-width: 700px) {
+    width: 100%;
+  }
 `
 
-const CalendarWrapper = styled.span`
-  width: 100%;
-  margin-top: 2rem;
-  margin-right: 2rem;
-  margin-left: 2rem;
+const CalendarWrapper = styled.div`
+    width: 94%;
+    height: 100%;
+    margin-left: 3%;
+    margin-right: 3%;
+    background-color: rgb(255,255,255,0.7);
 `
-  
+
+const CalendarPadding = styled.div`
+    padding: 1rem;
+`
+
 Modal.setAppElement('body')
 
 const Calendar = () => {
@@ -144,11 +156,11 @@ const Calendar = () => {
             content: {
               position: 'absolute',
               top: '20%',
-              left: '20%',
-              right: '20%',
+              left: '38%',
+              right: '38%',
               bottom: '20%',
               border: '1px solid #ccc',
-              background: '#fff',
+              background: 'rgba(245, 245, 245)',
               overflow: 'auto',
               WebkitOverflowScrolling: 'touch',
               borderRadius: '10px',
@@ -163,14 +175,19 @@ const Calendar = () => {
           <p>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
           <p>Description: {eventInfo && eventInfo.description}</p>
           <form>
-            <button onClick={deleteEvent}>Delete event</button>
+            <Button onClick={deleteEvent}>Delete event</Button>
           </form>
-          <button onClick={closeModal}>Close window</button>
+          <Button onClick={closeModal}>Close window</Button>
         </Modal>
 
           <CalendarWrapper>
+            <CalendarPadding>
             <FullCalendar
                 locale='en-gb'
+                titleFormat={{ // will produce something like "Tuesday, September 18, 2018"
+                  month: 'short',
+                  day: 'numeric',
+                }}
                 plugins={[ dayGridPlugin, interactionPlugin ]}
                 headerToolbar={{
                     left: "prev,next today",
@@ -182,6 +199,7 @@ const Calendar = () => {
                 dateClick={handleDateClick}
                 eventClick={renderEventContent}
             />
+            </CalendarPadding>
           </CalendarWrapper>
 
       
