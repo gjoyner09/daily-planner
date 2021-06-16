@@ -18,9 +18,6 @@
 .env.test.local
 .env.production.local
 
-# hide API key
-key.js
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

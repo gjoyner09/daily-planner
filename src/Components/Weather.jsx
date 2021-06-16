@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Forecast from "./Forecast";
 import styled from "styled-components";
 import Button from "./Button";
-import returnKey from "../key.js";
 
 const WeatherDiv = styled.span`
   width: 100vw;
@@ -185,7 +184,7 @@ const Weather = () => {
 
     position &&
       fetch(
-        `http://api.positionstack.com/v1/reverse?access_key=${returnKey()}&query=${
+        `http://api.positionstack.com/v1/reverse?access_key=b9c14a8c75fe8faaab665b63898d42f1&query=${
           position.latitude
         },${position.longitude}&output=json`
       )
@@ -207,7 +206,7 @@ const Weather = () => {
     event.preventDefault();
     setIsLoaded(false);
     fetch(
-      `http://api.positionstack.com/v1/forward?access_key=${returnKey()}&query=${searchText.replaceAll(
+      `http://api.positionstack.com/v1/forward?access_key=b9c14a8c75fe8faaab665b63898d42f1&query=${searchText.replaceAll(
         " ",
         "%20"
       )}&output=json`
