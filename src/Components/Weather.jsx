@@ -169,7 +169,7 @@ const Weather = () => {
   useEffect(() => {
     position &&
       fetch(
-        "http://www.7timer.info/bin/api.pl?lon=" +
+        "https://www.7timer.info/bin/api.pl?lon=" +
           position.longitude +
           "&lat=" +
           position.latitude +
@@ -183,16 +183,12 @@ const Weather = () => {
         .catch((error) => console.log(error));
 
     position &&
-      fetch(
-        `http://api.positionstack.com/v1/reverse?access_key=b9c14a8c75fe8faaab665b63898d42f1&query=${
-          position.latitude
-        },${position.longitude}&output=json`
-      )
+      fetch(`https://api.opencagedata.com/geocode/v1/json?q=${position.latitude}+${position.longitude}&key=24033e439ac74d6b95c36ca8359ac919`)
         .then((res) => res.json())
         .then((info) => {
           setLocation({
-            city: info.data[0].locality,
-            country: info.data[0].country,
+            city: info.results[0].components.city,
+            country: info.results[0].components.country,
           });
         })
         .catch((error) => console.log(error));
@@ -205,17 +201,15 @@ const Weather = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setIsLoaded(false);
-    fetch(
-      `http://api.positionstack.com/v1/forward?access_key=b9c14a8c75fe8faaab665b63898d42f1&query=${searchText.replaceAll(
-        " ",
-        "%20"
-      )}&output=json`
-    )
+    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${searchText.replaceAll(
+      " ",
+      "%20"
+    )}&key=24033e439ac74d6b95c36ca8359ac919`)
       .then((res) => res.json())
       .then((info) => {
         setPosition({
-          latitude: Number(info.data[0].latitude),
-          longitude: Number(info.data[0].longitude),
+          latitude: Number(info.results[0].geometry.lat),
+          longitude: Number(info.results[0].geometry.lng),
         });
       });
   };
