@@ -7,7 +7,6 @@ import Weather from './Components/Weather'
 function App() {
   return (
     <div className="App">
-
       <Weather></Weather>
       <Todo></Todo>
       <Calendar></Calendar>
