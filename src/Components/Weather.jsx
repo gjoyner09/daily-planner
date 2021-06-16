@@ -77,7 +77,8 @@ function Weather() {
     const [celcius, setCelcius] = useState(true)
 
     useEffect(() => {
-        navigator.geolocation.getCurrentPosition((data) => {
+        !position && console.log("in component did mount")
+        !position && navigator.geolocation.getCurrentPosition((data) => {
             setPosition({latitude: data.coords.latitude, longitude: data.coords.longitude})
         })
     }, [])
@@ -95,13 +96,10 @@ function Weather() {
         .catch((error) => console.log(error))
 
         
-        position && fetch(`https://geocode.xyz/${position.latitude},${position.longitude}?geoit=json`)
+        position && fetch(`http://api.positionstack.com/v1/reverse?access_key=b9c14a8c75fe8faaab665b63898d42f1&query=${position.latitude},${position.longitude}&output=json`)
         .then(res => res.json())
-        .then(data => {
-            let city = data.city
-            city = city[0] + city.substring(1).toLowerCase()
-            city = city.split('').map((letter, index) => city[index - 1] === " " ? letter.toUpperCase() : letter).join('')
-            setLocation({city: city, country: data.country})
+        .then(info => {
+            setLocation({city: info.data[0].locality, country: info.data[0].country})
         })
         .catch((error) => console.log(error))
     }, [position])
@@ -113,10 +111,11 @@ function Weather() {
     const handleSubmit = (event) => {
         event.preventDefault()
         setIsLoaded(false)
-        fetch(`https://geocode.xyz/${searchText.replaceAll(' ', '%20')}?json=1`)
+        fetch(`http://api.positionstack.com/v1/forward?access_key=b9c14a8c75fe8faaab665b63898d42f1&query=${searchText.replaceAll(' ', '%20')}&output=json`)
         .then(res => res.json())
-        .then(data => {
-            setPosition({latitude: Number(data.latt), longitude: Number(data.longt)})
+        .then(info => {
+            console.log(info)
+            setPosition({latitude: Number(info.data[0].latitude), longitude: Number(info.data[0].longitude)})
         })
     }
     
@@ -143,7 +142,7 @@ function Weather() {
                 <HeaderDivider>
                     {isLoaded && location && location.city && <City>{location.city}, {location.country}</City>}
                     <Form onSubmit={handleSubmit}>
-                            <Label htmlFor="weatherLocation">Search city:</Label>
+                            <Label htmlFor="weatherLocation">Search location:</Label>
                             <input type="text" id="weatherLocation" name="weatherLocation" onChange={handleChange}/>
                             <input type="submit" />
                     </Form>

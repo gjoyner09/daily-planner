@@ -41,23 +41,60 @@ const Calendar = () => {
 
         const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
         const name = prompt("Event name:")
+        
+        const validateHour = (hour) => {
+          return hour >=0 && hour <= 23 ? true : false
+        }
+        
+        const validateMinute = (minute) => {
+          return minute >= 0 && minute <= 59 ? true : false
+        }
+        
+        const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
+          if (startHour < endHour) {
+            return true
+          } else if (startHour > endHour) {
+            return false
+          } else if (startMinute < endMinute) {
+            return true
+          } else {
+            return false
+          }
+        }
+        
+        
         if(name) {
+          try {
             let userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
-            while (!userStart.match(timeFormat)) {
-                alert("Please enter a valid time")
+            let hourStart = Number(userStart.substring(0,2))
+            let minuteStart = Number(userStart.substring(3,5))
+            while (!userStart.match(timeFormat) || !validateHour(hourStart) || !validateMinute(minuteStart)) {
+                alert("Please enter a valid time in 24hr 'hh:mm' format")
                 userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
-            }
+                hourStart = Number(userStart.substring(0,2))
+                minuteStart = Number(userStart.substring(3,5))
+            } 
+            
             let start = arg.date.toString()
+            
             let userEnd = prompt("Enter the event end in 24hr 'hh:mm' format: ")
-            while (!userEnd.match(timeFormat)) {
-                alert("Please enter a valid time")
+            let hourEnd = Number(userEnd.substring(0,2))
+            let minuteEnd = Number(userEnd.substring(3,5))
+            while (!userEnd.match(timeFormat) || !validateHour(hourEnd) || !validateMinute(minuteEnd) || !startBeforeEnd(hourStart, minuteStart, hourEnd, minuteEnd)) {
+                alert("Please enter a valid time in 24hr 'hh:mm' format, ensuring that it is after the event start time")
                 userEnd = prompt("Enter the event start in 24hr 'hh:mm' format: ")
-            }
+                hourEnd = Number(userEnd.substring(0,2))
+                minuteEnd = Number(userEnd.substring(3,5))
+              }
+            
             let end = Date.parse(start.replace("00:00:00", userEnd + ":00"))
             start = Date.parse(start.replace("00:00:00", userStart + ":00"))
-            let description = prompt("Description:")
+            let description = prompt("Description (optional):")
             let id = events.length ? events[events.length - 1].id + 1 : 1
             addEvent({title: name, start: start, end: end, id: id, description: description})
+          } catch {
+            alert("Event not created")
+          }
         }
     }
     
