@@ -77,7 +77,6 @@ function Weather() {
     const [celcius, setCelcius] = useState(true)
 
     useEffect(() => {
-        !position && console.log("in component did mount")
         !position && navigator.geolocation.getCurrentPosition((data) => {
             setPosition({latitude: data.coords.latitude, longitude: data.coords.longitude})
         })
@@ -114,7 +113,6 @@ function Weather() {
         fetch(`http://api.positionstack.com/v1/forward?access_key=b9c14a8c75fe8faaab665b63898d42f1&query=${searchText.replaceAll(' ', '%20')}&output=json`)
         .then(res => res.json())
         .then(info => {
-            console.log(info)
             setPosition({latitude: Number(info.data[0].latitude), longitude: Number(info.data[0].longitude)})
         })
     }

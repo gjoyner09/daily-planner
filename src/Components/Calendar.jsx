@@ -23,10 +23,6 @@ const Calendar = () => {
     const initialEvents = localStorage.getItem('events')
     const [events, setEvents] = useState(initialEvents ? JSON.parse(initialEvents) : [])
     const [eventInfo, setEventInfo] = useState(null)
-    const [eventTitle, setEventTitle] = useState('')
-    const [eventStart, setEventStart] = useState('')
-    const [eventEnd, setEventEnd] = useState('')
-    const [eventDescription, setEventDescription] = useState('')
     
     const addEvent = (event) => {
         const newEvents = [
@@ -98,46 +94,42 @@ const Calendar = () => {
         }
     }
     
-    const renderEventContent = (eventInfo) => {
-        setEventInfo(eventInfo)
-        openModal()
-    }
-
-    const deleteEvent = () => {
-        const newEvents = events.filter(event => event.id !== Number(eventInfo.event._def.publicId))
-        localStorage.setItem('events', JSON.stringify(newEvents))
-        setEvents(newEvents)
-        setEventInfo(null)                
+    const renderEventContent = ({event}) => {
+      setEventInfo({title: event._def.title, start: event._instance.range.start, end: event._instance.range.end, description: event._def.extendedProps.description, id: event.id})
     }
     
-    useEffect(()=>{
-        if (eventInfo!==null) {
-            setEventTitle(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].title)
-            setEventStart(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].start)
-            setEventEnd(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].end)
-            setEventDescription(events.filter(event => event.id === Number(eventInfo.event._def.publicId))[0].description)
-        }
-    },[])
+    useEffect(() => {
+      eventInfo && openModal()
+    }, [eventInfo])
+
+    const deleteEvent = (event) => {
+        event.preventDefault()
+        const newEvents = events.filter(event => event.id !== Number(eventInfo.id))
+        localStorage.setItem('events', JSON.stringify(newEvents))
+        setEvents(newEvents)
+        setEventInfo(null)
+        setIsOpen(false)               
+    }
 
     const [modalIsOpen,setIsOpen] = useState(false);
     function openModal() {
       setIsOpen(true);
     }
   
-    function afterOpenModal() {
-      // references are now sync'd and can be accessed.
-    //   subtitle.style.color = '#f00';
-    }
-  
     function closeModal(){
       setIsOpen(false);
+    }
+    
+    const ausDateStyle = (date) => {
+      return date.toLocaleString('en-AU', { timeZone: 'UTC' })
+      // let dateString = date.toString().substring(0,21)
+      // return dateString.substring(0,4) + dateString.substring(8,11) + dateString.substring(4,8) + dateString.substring(11)
     }
       
     return (
         <CalendarSpan>
         <Modal
           isOpen={modalIsOpen}
-          onAfterOpen={afterOpenModal}
           onRequestClose={closeModal}
           style={{
             overlay: {
@@ -146,7 +138,8 @@ const Calendar = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(255, 255, 255, 0.75)'
+              backgroundColor: 'rgba(255, 255, 255, 0.75)',
+              zIndex: 10
             },
             content: {
               position: 'absolute',
@@ -161,30 +154,23 @@ const Calendar = () => {
               borderRadius: '10px',
               outline: 'none',
               padding: '20px',
-            },
-            overlay: {zIndex: 10}
+            }
           }}
           contentLabel="Event"
         >
-          <button onClick={closeModal}>close</button>
-          <div>EVENT</div>
-          <p>Title: {eventTitle}</p>
-          <p>Start: {new Date(eventStart).toString().substring(0,24)}</p>
-          <p>End: {new Date(eventEnd).toString().substring(0,24)}</p>
-          <p>Description: {eventDescription}</p>
+          <p>Title: {eventInfo && eventInfo.title}</p>
+          <p>Start: {eventInfo && ausDateStyle(eventInfo.start)}</p>
+          <p>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
+          <p>Description: {eventInfo && eventInfo.description}</p>
           <form>
-            <button onClick={deleteEvent}>DELETE</button>
+            <button onClick={deleteEvent}>Delete event</button>
           </form>
+          <button onClick={closeModal}>Close window</button>
         </Modal>
-
-
-
-
-
-
 
           <CalendarWrapper>
             <FullCalendar
+                locale='en-gb'
                 plugins={[ dayGridPlugin, interactionPlugin ]}
                 headerToolbar={{
                     left: "prev,next today",
