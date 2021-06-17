@@ -2,6 +2,9 @@ import Granim from 'granim'
 import { useEffect } from 'react';
 import styled from 'styled-components'
 import background from '../Img/background.jpg'
+import landscape from '../Img/landscape.jpg'
+import creek from '../Img/creek.jpg'
+import mountainscape from '../Img/mountainscape.jpg'
 
 const Canvas = styled.canvas`
     position: fixed;
@@ -23,9 +26,8 @@ const GranimComponent = () => {
             direction: 'top-bottom',
             isPausedWhenNotInView: true,
             image : {
-                source: background,
+                source: mountainscape,
                 blendingMode: 'multiply',
-                position: ['center', 'center'],
                 stretchMode: ['stretch-if-smaller', 'stretch-if-smaller']
             },
             states : {

@@ -5,6 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import styled from 'styled-components'
 import Button from './Button'
+import '../App.css'
 
 const CalendarSpan = styled.span`
   margin-top: 2rem;
@@ -143,31 +144,8 @@ const Calendar = () => {
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
-          style={{
-            overlay: {
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(255, 255, 255, 0.75)',
-              zIndex: 10
-            },
-            content: {
-              position: 'absolute',
-              top: '20%',
-              left: '38%',
-              right: '38%',
-              bottom: '20%',
-              border: '1px solid #ccc',
-              background: 'rgba(245, 245, 245)',
-              overflow: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              borderRadius: '10px',
-              outline: 'none',
-              padding: '20px',
-            }
-          }}
+          className="modal"
+          overlayClassName="overlayModal"
           contentLabel="Event"
         >
           <p>Title: {eventInfo && eventInfo.title}</p>
