@@ -10,8 +10,6 @@ import mcloudy from '../Img/wi-day-cloudy.svg'
 import snow from '../Img/wi-snow.svg'
 import ts from '../Img/wi-thunderstorm.svg'
 
-
-
 const WeatherCard = styled.div`
     background-color: rgba(255, 255, 255, 0.7);
     width: 15%;
@@ -43,11 +41,13 @@ const H3 = styled.h3`
     margin-bottom: 0.5rem;
 `
 
+// Headers for the days of the week for weather forecasts
 let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 let date = new Date()
 let day = date.getDay()
 
+// Get the associated image with the cloud cover forecast
 const weatherImg = (cloudcover) => {
     switch (cloudcover) {
         case "cloudy":
@@ -83,6 +83,7 @@ const weatherImg = (cloudcover) => {
     }
 }
 
+// Get the text associated with the cloud cover data
 const cloudCover = (cloudcover) => {
     console.log(cloudcover)
     switch (cloudcover) {
@@ -120,7 +121,7 @@ const cloudCover = (cloudcover) => {
 }
 
 const Forecast = (props) => {
-
+    // return one forecast card with the day, cloud cover image, cloud cover text, high and low
     return (
         <WeatherCard className='DayForecast'>
 

@@ -5,7 +5,7 @@ import Todo from './Components/To-Do'
 import Weather from './Components/Weather'
 import Granim from './Components/GranimComponent'
 
-function App() {
+const App = () => {
   return (
     <div className="App">
       <Granim></Granim>

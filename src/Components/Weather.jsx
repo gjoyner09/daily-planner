@@ -117,23 +117,23 @@ const ButtonSpan = styled.span`
 
 const ButtonCtoF = styled.button`
   width: 100px;
-   display: inline-block;
-   padding: 0.1em 0.7em;
-   border: 0.1em solid #ffffff;
-   margin: 0 0.3em 0.3em 0;
-   border-radius: 0.3em;
-   box-sizing: border-box;
-   text-decoration: none;
+  display: inline-block;
+  padding: 0.1em 0.7em;
+  border: 0.1em solid #ffffff;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.3em;
+  box-sizing: border-box;
+  text-decoration: none;
   font-family: "Manrope", sans-serif;
   font-weight: bold;
-   color: #000000;
+  color: #000000;
   background-color: rgb(230, 230, 230, 0.65);
-   text-align: center;
-   transition: all 0.2s;
+  text-align: center;
+  transition: all 0.2s;
 
   &:hover {
-     color: #000000;
-     background-color: rgb(230, 230, 230, 0.9);
+    color: #000000;
+    background-color: rgb(230, 230, 230, 0.9);
     border: 0.1em solid #aaaaaa;
   }
 
@@ -156,6 +156,7 @@ const Weather = () => {
   const [searchText, setSearchText] = useState("");
   const [celcius, setCelcius] = useState(true);
 
+  // Get user's location on mount
   useEffect(() => {
     !position &&
       navigator.geolocation.getCurrentPosition((data) => {
@@ -167,6 +168,7 @@ const Weather = () => {
   }, []);
 
   useEffect(() => {
+    // once position has been updated, get the weather for that location
     position &&
       fetch(
         "https://www.7timer.info/bin/api.pl?lon=" +
@@ -182,8 +184,11 @@ const Weather = () => {
         })
         .catch((error) => console.log(error));
 
+    // once position has been updated, get the city and country of that location
     position &&
-      fetch(`https://api.opencagedata.com/geocode/v1/json?q=${position.latitude}+${position.longitude}&key=24033e439ac74d6b95c36ca8359ac919`)
+      fetch(
+        `https://api.opencagedata.com/geocode/v1/json?q=${position.latitude}+${position.longitude}&key=24033e439ac74d6b95c36ca8359ac919`
+      )
         .then((res) => res.json())
         .then((info) => {
           setLocation({
@@ -194,17 +199,21 @@ const Weather = () => {
         .catch((error) => console.log(error));
   }, [position]);
 
+  // update the value in the search bar as the user types
   const handleChange = (event) => {
     setSearchText(event.target.value);
   };
 
+  // when the user submits a search for a location, get the weather for that locatin and update the position in state
   const handleSubmit = (event) => {
     event.preventDefault();
     setIsLoaded(false);
-    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${searchText.replaceAll(
-      " ",
-      "%20"
-    )}&key=24033e439ac74d6b95c36ca8359ac919`)
+    fetch(
+      `https://api.opencagedata.com/geocode/v1/json?q=${searchText.replaceAll(
+        " ",
+        "%20"
+      )}&key=24033e439ac74d6b95c36ca8359ac919`
+    )
       .then((res) => res.json())
       .then((info) => {
         setPosition({
@@ -214,12 +223,14 @@ const Weather = () => {
       });
   };
 
+  // when the user click the "switch to" button, change the text of the button and update the temperatures
   const toggleCandF = () => {
     const tempButton = document.getElementById("cToF");
     tempButton.innerHTML = celcius ? "Switch to °C" : "Switch to °F";
     setCelcius(!celcius);
   };
 
+  // convert celcius to fahrenheit
   const setTemp = (temp) => {
     if (celcius) {
       return temp;
@@ -230,6 +241,7 @@ const Weather = () => {
 
   return (
     <WeatherDiv>
+      {/* Header of page with "Daily Planner" title, location, search bar and button to switch C/F */}
       <HeaderWrapper>
         <HeaderDivider>
           <Title>Daily Planner</Title>
@@ -257,12 +269,14 @@ const Weather = () => {
           </ButtonSpan>
         </HeaderDivider>
       </HeaderWrapper>
+      {/* Forecast portion with loading bar or forecasts */}
       <ForecastWrapper>
         {!isLoaded && (
           <LoadSpan>
             <div className="loader"></div>
           </LoadSpan>
         )}
+        {/* map through the first 6 results for the weather forecast and display to the user */}
         {isLoaded && (
           <ForecastDiv>
             {items.map(function (item, index) {
