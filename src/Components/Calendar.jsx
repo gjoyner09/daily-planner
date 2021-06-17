@@ -123,8 +123,15 @@ const Calendar = () => {
         setIsOpen(false)               
     }
 
+    const editEvent = (event) => {
+      let  newInfo = prompt("Description (optional):")
+      eventInfo['description'] = newInfo
+      setEventInfo(eventInfo)
+    }
+
     const [modalIsOpen,setIsOpen] = useState(false);
     function openModal() {
+      console.log()
       setIsOpen(true);
     }
   
@@ -177,6 +184,7 @@ const Calendar = () => {
           <form>
             <Button onClick={deleteEvent}>Delete event</Button>
           </form>
+          <Button onClick={editEvent}>Edit event</Button>
           <Button onClick={closeModal}>Close window</Button>
         </Modal>
 
