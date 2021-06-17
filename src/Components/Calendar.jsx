@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import Modal from 'react-modal';
-import FullCalendar from '@fullcalendar/react'
+import FullCalendar, { EventApi } from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import styled from 'styled-components'
@@ -29,7 +29,18 @@ const CalendarPadding = styled.div`
   padding: 1rem;
 `
 
+
+
+const infoStyle = {
+  marginTop: '40px',
+  marginBottom: '40px'
+  
+}
+
+
+
 // modal for clicking on events
+
 Modal.setAppElement('body')
 
 const Calendar = () => {
@@ -47,40 +58,49 @@ const Calendar = () => {
         localStorage.setItem('events', JSON.stringify(newEvents))
         setEvents(newEvents)
     }
+
+
+
+    // timeFormat, validateMinute, startBeforeEnd are common to both handleDateClick and updateEvent
+    
+    // will be used to verify that the user's input is in the correct time format
+    const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
+  
+    // validates that the hour is within 0-23
+    const validateHour = (hour) => {
+      return hour >=0 && hour <= 23 ? true : false
+    }
+    
+    // validates that the minute is within 0-59
+    const validateMinute = (minute) => {
+      return minute >= 0 && minute <= 59 ? true : false
+    }
+    
+    // validates that the start time is before the end time
+    const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
+      if (startHour < endHour) {
+        return true
+      } else if (startHour > endHour) {
+        return false
+      } else if (startMinute < endMinute) {
+        return true
+      } else {
+        return false
+      }
+    }
+
+
+
     
     // when the user clicks on a date in the calendar, it will prompt the user to create an event
     const handleDateClick = (arg) => {
 
-        // will be used to verify that the user's input is in the correct time format
-        const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
-        
-        // validates that the hour is within 0-23
-        const validateHour = (hour) => {
-          return hour >=0 && hour <= 23 ? true : false
-        }
-        
-        // validates that the minute is within 0-59
-        const validateMinute = (minute) => {
-          return minute >= 0 && minute <= 59 ? true : false
-        }
-        
-        // validates that the start time is before the end time
-        const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
-          if (startHour < endHour) {
-            return true
-          } else if (startHour > endHour) {
-            return false
-          } else if (startMinute < endMinute) {
-            return true
-          } else {
-            return false
-          }
-        }
-        
-        // prompt to as the user to create the event name
         const name = prompt("Event name:")
         
+
+        
         // does not create an event if the user doesn't specify a title
+
         if(name) {
           try {
             let userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
@@ -122,18 +142,21 @@ const Calendar = () => {
     
     // sets the state based on the event that the user clicks on in the calendar
     const renderEventContent = ({event}) => {
+      
       setEventInfo({
         title: event._def.title,
         start: event._instance.range.start,
         end: event._instance.range.end,
         description: event._def.extendedProps.description,
         id: event.id})
+
     }
     
     // once event info state is updated, opens the modal with the info about that event
     useEffect(() => {
       eventInfo && openModal()
     }, [eventInfo])
+
 
     // deletes the event from state and localstorage when the user clicks on the event and then clicks delete
     const deleteEvent = (event) => {
@@ -145,7 +168,93 @@ const Calendar = () => {
         setIsOpen(false)               
     }
 
+
+
+
+    const editEvent = (event, str) => {
+
+      event.preventDefault()
+      const myEvent = events.filter(event => event.id === Number(eventInfo.id))[0]
+      const newEvents = events.slice(0, events.length)
+      const date = new Date()
+      const timeZoneOffset = date.getTimezoneOffset()*60000
+
+
+      let title = eventInfo.title
+      let start = eventInfo.start
+      let end = eventInfo.end
+      let description = eventInfo.description
+      let hourStart = start.getUTCHours()
+      let minuteStart = start.getUTCMinutes()
+      let hourEnd = end.getUTCHours()
+      let minuteEnd = end.getUTCMinutes()
+
+
+
+
+      try {
+
+        if (str==='title') {
+
+          title = prompt("Event name:")
+          eventInfo.title = title
+          myEvent.title = title
+
+        } else if (str==='start') {
+
+          let userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+          hourStart = Number(userStart.substring(0,2))
+          minuteStart = Number(userStart.substring(3,5))
+          while (!userStart.match(timeFormat) || !validateHour(hourStart) || !validateMinute(minuteStart)) {
+              alert("Please enter a valid time in 24hr 'hh:mm' format")
+              userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+              hourStart = Number(userStart.substring(0,2))
+              minuteStart = Number(userStart.substring(3,5))
+          } 
+
+          eventInfo.start.setUTCHours(hourStart)
+          eventInfo.start.setUTCMinutes(minuteStart)
+          myEvent.start = Date.parse(eventInfo.start) + timeZoneOffset
+
+        } else if (str==='end') {
+
+          let userEnd = prompt("Enter the event end in 24hr 'hh:mm' format: ")
+          hourEnd = Number(userEnd.substring(0,2))
+          minuteEnd = Number(userEnd.substring(3,5))
+          while (!userEnd.match(timeFormat) || !validateHour(hourEnd) || !validateMinute(minuteEnd) || !startBeforeEnd(hourStart, minuteStart, hourEnd, minuteEnd)) {
+            alert("Please enter a valid time in 24hr 'hh:mm' format, ensuring that it is after the event start time")
+            userEnd = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+            hourEnd = Number(userEnd.substring(0,2))
+            minuteEnd = Number(userEnd.substring(3,5))
+          }
+
+          eventInfo.end.setUTCHours(hourEnd)
+          eventInfo.end.setUTCMinutes(minuteEnd)
+          myEvent.end = Date.parse(eventInfo.end) + timeZoneOffset
+
+        } else if (str==='description') {
+          description = prompt("Description (optional):")
+          eventInfo.title = description
+          myEvent.title = description
+        }
+
+
+        localStorage.setItem('events', JSON.stringify(newEvents))
+        setEvents(newEvents)
+
+      } catch {
+        alert("Event not updated")
+      }
+
+
+      
+    }
+
+
+
+
     // sets state for modal and functions to open and close the modal
+
     const [modalIsOpen,setIsOpen] = useState(false);
     function openModal() {
       setIsOpen(true);
@@ -162,23 +271,63 @@ const Calendar = () => {
       
     return (
         <CalendarSpan>
-          {/* Modal for when the user clicks on an event */}
-          <Modal
-            isOpen={modalIsOpen}
-            onRequestClose={closeModal}
-            className="modal"
-            overlayClassName="overlayModal"
-            contentLabel="Event"
-          >
-            <p>Title: {eventInfo && eventInfo.title}</p>
-            <p>Start: {eventInfo && ausDateStyle(eventInfo.start)}</p>
-            <p>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
-            <p>Description: {eventInfo && eventInfo.description}</p>
-            <form>
-              <Button onClick={deleteEvent}>Delete event</Button>
-            </form>
-            <Button onClick={closeModal}>Close window</Button>
-          </Modal>
+
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={{
+            overlay: {
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.75)',
+              zIndex: 10
+            },
+            content: {
+              position: 'absolute',
+              top: '20%',
+              left: '30%',
+              right: '30%',
+              bottom: '15%',
+              border: '1px solid #ccc',
+              background: 'rgba(245, 245, 245)',
+              overflow: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              borderRadius: '10px',
+              outline: 'none',
+              padding: '20px',
+            }
+          }}
+          contentLabel="Event"
+        >
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>Title: {eventInfo && eventInfo.title}</p>
+            <Button onClick={(event => {editEvent(event, 'title')})}>Edit Title</Button>
+          </div>
+
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>Start: {eventInfo && ausDateStyle(eventInfo.start)}</p>
+            <Button onClick={(event => {editEvent(event, 'start')})}>Edit Start</Button>
+          </div>
+
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
+            <Button onClick={(event => {editEvent(event, 'end')})}>Edit End</Button>
+          </div>
+
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>Description: {eventInfo && eventInfo.description}</p>
+            <Button onClick={(event => {editEvent(event, 'description')})}>Edit Description</Button>
+          </div>
+
+          <form>
+            <Button onClick={deleteEvent}>Delete event</Button>
+          </form>
+          <Button onClick={closeModal}>Close window</Button>
+        </Modal>
+
 
           <CalendarWrapper>
             <CalendarPadding>
