@@ -29,6 +29,14 @@ const CalendarPadding = styled.div`
     padding: 1rem;
 `
 
+
+const infoStyle = {
+  marginTop: '40px',
+  marginBottom: '40px'
+  
+}
+
+
 Modal.setAppElement('body')
 
 const Calendar = () => {
@@ -45,6 +53,10 @@ const Calendar = () => {
         setEvents(newEvents)
     }
 
+
+
+    // timeFormat, validateMinute, startBeforeEnd are common to both handleDateClick and updateEvent
+
     const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
     const validateHour = (hour) => {
       return hour >=0 && hour <= 23 ? true : false
@@ -55,11 +67,6 @@ const Calendar = () => {
     }
     
     const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
-      console.log(startHour)
-      console.log(startMinute)
-      console.log(endHour)
-      console.log(endMinute)
-
       if (startHour < endHour) {
         return true
       } else if (startHour > endHour) {
@@ -70,6 +77,9 @@ const Calendar = () => {
         return false
       }
     }
+
+
+
     
     const handleDateClick = (arg) => { // bind with an arrow function
 
@@ -225,8 +235,6 @@ const Calendar = () => {
     
     const ausDateStyle = (date) => {
       return date.toLocaleString('en-AU', { timeZone: 'UTC' })
-      // let dateString = date.toString().substring(0,21)
-      // return dateString.substring(0,4) + dateString.substring(8,11) + dateString.substring(4,8) + dateString.substring(11)
     }
       
     return (
@@ -247,9 +255,9 @@ const Calendar = () => {
             content: {
               position: 'absolute',
               top: '20%',
-              left: '38%',
-              right: '38%',
-              bottom: '20%',
+              left: '30%',
+              right: '30%',
+              bottom: '15%',
               border: '1px solid #ccc',
               background: 'rgba(245, 245, 245)',
               overflow: 'auto',
@@ -261,17 +269,25 @@ const Calendar = () => {
           }}
           contentLabel="Event"
         >
-          <p>Title: {eventInfo && eventInfo.title}</p>
-          <Button onClick={(event => {editEvent(event, 'title')})}>Edit Title</Button>
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>Title: {eventInfo && eventInfo.title}</p>
+            <Button onClick={(event => {editEvent(event, 'title')})}>Edit Title</Button>
+          </div>
 
-          <p>Start: {eventInfo && ausDateStyle(eventInfo.start)}</p>
-          <Button onClick={(event => {editEvent(event, 'start')})}>Edit Start</Button>
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>Start: {eventInfo && ausDateStyle(eventInfo.start)}</p>
+            <Button onClick={(event => {editEvent(event, 'start')})}>Edit Start</Button>
+          </div>
 
-          <p>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
-          <Button onClick={(event => {editEvent(event, 'end')})}>Edit End</Button>
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
+            <Button onClick={(event => {editEvent(event, 'end')})}>Edit End</Button>
+          </div>
 
-          <p>Description: {eventInfo && eventInfo.description}</p>
-          <Button onClick={(event => {editEvent(event, 'description')})}>Edit Description</Button>
+          <div style={infoStyle}>
+            <p style={{margin: '5px'}}>Description: {eventInfo && eventInfo.description}</p>
+            <Button onClick={(event => {editEvent(event, 'description')})}>Edit Description</Button>
+          </div>
 
           <form>
             <Button onClick={deleteEvent}>Delete event</Button>
