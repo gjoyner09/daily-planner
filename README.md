@@ -1,3 +1,27 @@
+# Daily Planner App
+
+## Overview
+
+A React app that combines weather, to-do lists and a calendar into one daily planner
+
+## Purpose
+
+Practice using React, libraries and APIs
+
+## Tech stack
+
+React, JavaScript, HTML, CSS, 7timer weather API, OpenCageData location API, Fullcalendar.io library, Granim.js library, Netlify (deployment)
+
+## Deployment
+
+https://react-daily-planner.netlify.app/
+
+## Authors
+
+Grey Joyner and Nick Hammond
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

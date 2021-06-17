@@ -1,7 +1,7 @@
 import Granim from 'granim'
 import { useEffect } from 'react';
 import styled from 'styled-components'
-import background from '../Img/background.jpg'
+import mountainscape from '../Img/mountainscape.jpg'
 
 const Canvas = styled.canvas`
     position: fixed;
@@ -15,17 +15,17 @@ const Canvas = styled.canvas`
     z-index: -10;
 `
 
+// Gradient background using the Granim.js library
 const GranimComponent = () => {
 
     useEffect(()=> {
-        var granimInstance = new Granim({
+        const granimInstance = new Granim({
             element: '#canvas-image-blending',
             direction: 'top-bottom',
             isPausedWhenNotInView: true,
             image : {
-                source: background,
+                source: mountainscape,
                 blendingMode: 'multiply',
-                position: ['center', 'center'],
                 stretchMode: ['stretch-if-smaller', 'stretch-if-smaller']
             },
             states : {

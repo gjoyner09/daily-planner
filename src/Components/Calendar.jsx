@@ -18,16 +18,17 @@ const CalendarSpan = styled.span`
 `
 
 const CalendarWrapper = styled.div`
-    width: 94%;
-    height: 100%;
-    margin-left: 3%;
-    margin-right: 3%;
-    background-color: rgb(255,255,255,0.7);
+  width: 94%;
+  height: 100%;
+  margin-left: 3%;
+  margin-right: 3%;
+  background-color: rgb(255,255,255,0.7);
 `
 
 const CalendarPadding = styled.div`
-    padding: 1rem;
+  padding: 1rem;
 `
+
 
 
 const infoStyle = {
@@ -37,13 +38,18 @@ const infoStyle = {
 }
 
 
+
+// modal for clicking on events
+
 Modal.setAppElement('body')
 
 const Calendar = () => {
+    // the app will store and retrieve events in localstorage
     const initialEvents = localStorage.getItem('events')
     const [events, setEvents] = useState(initialEvents ? JSON.parse(initialEvents) : [])
     const [eventInfo, setEventInfo] = useState(null)
     
+    // add an event to state and save in localstorage
     const addEvent = (event) => {
         const newEvents = [
             ...events,
@@ -56,16 +62,21 @@ const Calendar = () => {
 
 
     // timeFormat, validateMinute, startBeforeEnd are common to both handleDateClick and updateEvent
-
+    
+    // will be used to verify that the user's input is in the correct time format
     const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
+  
+    // validates that the hour is within 0-23
     const validateHour = (hour) => {
       return hour >=0 && hour <= 23 ? true : false
     }
     
+    // validates that the minute is within 0-59
     const validateMinute = (minute) => {
       return minute >= 0 && minute <= 59 ? true : false
     }
     
+    // validates that the start time is before the end time
     const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
       if (startHour < endHour) {
         return true
@@ -81,15 +92,21 @@ const Calendar = () => {
 
 
     
-    const handleDateClick = (arg) => { // bind with an arrow function
+    // when the user clicks on a date in the calendar, it will prompt the user to create an event
+    const handleDateClick = (arg) => {
 
         const name = prompt("Event name:")
         
+
+        
+        // does not create an event if the user doesn't specify a title
+
         if(name) {
           try {
             let userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
             let hourStart = Number(userStart.substring(0,2))
             let minuteStart = Number(userStart.substring(3,5))
+            // asks the user to try again if input is not valid
             while (!userStart.match(timeFormat) || !validateHour(hourStart) || !validateMinute(minuteStart)) {
                 alert("Please enter a valid time in 24hr 'hh:mm' format")
                 userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
@@ -102,6 +119,7 @@ const Calendar = () => {
             let userEnd = prompt("Enter the event end in 24hr 'hh:mm' format: ")
             let hourEnd = Number(userEnd.substring(0,2))
             let minuteEnd = Number(userEnd.substring(3,5))
+            // asks the user to try again if input is not valid
             while (!userEnd.match(timeFormat) || !validateHour(hourEnd) || !validateMinute(minuteEnd) || !startBeforeEnd(hourStart, minuteStart, hourEnd, minuteEnd)) {
                 alert("Please enter a valid time in 24hr 'hh:mm' format, ensuring that it is after the event start time")
                 userEnd = prompt("Enter the event start in 24hr 'hh:mm' format: ")
@@ -113,24 +131,34 @@ const Calendar = () => {
             start = Date.parse(start.replace("00:00:00", userStart + ":00"))
             let description = prompt("Description (optional):")
             let id = events.length ? events[events.length - 1].id + 1 : 1
+            // adds the event to the calendar
             addEvent({title: name, start: start, end: end, id: id, description: description})
           } catch {
+            // warns the user if they click cancel
             alert("Event not created")
           }
         }
     }
     
+    // sets the state based on the event that the user clicks on in the calendar
     const renderEventContent = ({event}) => {
-      console.log(events)
-      setEventInfo({title: event._def.title, start: event._instance.range.start, end: event._instance.range.end, description: event._def.extendedProps.description, id: event.id})
+      
+      setEventInfo({
+        title: event._def.title,
+        start: event._instance.range.start,
+        end: event._instance.range.end,
+        description: event._def.extendedProps.description,
+        id: event.id})
+
     }
     
+    // once event info state is updated, opens the modal with the info about that event
     useEffect(() => {
       eventInfo && openModal()
     }, [eventInfo])
 
 
-
+    // deletes the event from state and localstorage when the user clicks on the event and then clicks delete
     const deleteEvent = (event) => {
         event.preventDefault()
         const newEvents = events.filter(event => event.id !== Number(eventInfo.id))
@@ -139,6 +167,7 @@ const Calendar = () => {
         setEventInfo(null)
         setIsOpen(false)               
     }
+
 
 
 
@@ -160,7 +189,7 @@ const Calendar = () => {
       let hourEnd = end.getUTCHours()
       let minuteEnd = end.getUTCMinutes()
 
-      console.log(start)
+
 
 
       try {
@@ -223,9 +252,11 @@ const Calendar = () => {
 
 
 
+
+    // sets state for modal and functions to open and close the modal
+
     const [modalIsOpen,setIsOpen] = useState(false);
     function openModal() {
-      console.log()
       setIsOpen(true);
     }
   
@@ -233,12 +264,14 @@ const Calendar = () => {
       setIsOpen(false);
     }
     
+    // converts date to Australian style
     const ausDateStyle = (date) => {
       return date.toLocaleString('en-AU', { timeZone: 'UTC' })
     }
       
     return (
         <CalendarSpan>
+
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
@@ -295,30 +328,29 @@ const Calendar = () => {
           <Button onClick={closeModal}>Close window</Button>
         </Modal>
 
+
           <CalendarWrapper>
             <CalendarPadding>
-            <FullCalendar
-                locale='en-gb'
-                titleFormat={{ // will produce something like "Tuesday, September 18, 2018"
-                  month: 'short',
-                  day: 'numeric',
-                }}
-                plugins={[ dayGridPlugin, interactionPlugin ]}
-                headerToolbar={{
-                    left: "prev,next today",
-                    center: "title",
-                    right: "dayGridMonth,dayGridWeek,dayGridDay"
-                }}
-                initialView="dayGridWeek"
-                events={events}
-                dateClick={handleDateClick}
-                eventClick={renderEventContent}
-            />
+              {/* Calendar from the fullcalendar.io library */}
+              <FullCalendar
+                  locale='en-gb'
+                  titleFormat={{
+                    month: 'short',
+                    day: 'numeric',
+                  }}
+                  plugins={[ dayGridPlugin, interactionPlugin ]}
+                  headerToolbar={{
+                      left: "prev,next today",
+                      center: "title",
+                      right: "dayGridMonth,dayGridWeek,dayGridDay"
+                  }}
+                  initialView="dayGridWeek"
+                  events={events}
+                  dateClick={handleDateClick}
+                  eventClick={renderEventContent}
+              />
             </CalendarPadding>
           </CalendarWrapper>
-
-      
-
         </CalendarSpan>
         
 
