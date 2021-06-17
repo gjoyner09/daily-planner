@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import Modal from 'react-modal';
-import FullCalendar from '@fullcalendar/react'
+import FullCalendar, { EventApi } from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import styled from 'styled-components'
@@ -35,6 +35,7 @@ const Calendar = () => {
     const initialEvents = localStorage.getItem('events')
     const [events, setEvents] = useState(initialEvents ? JSON.parse(initialEvents) : [])
     const [eventInfo, setEventInfo] = useState(null)
+    const [currentEvent, setCurrentEvent] = useState(null)
     
     const addEvent = (event) => {
         const newEvents = [
@@ -107,12 +108,18 @@ const Calendar = () => {
     }
     
     const renderEventContent = ({event}) => {
+      console.log(event)
+      console.log(localStorage)
+      // setCurrentEvent(event)
+      // setEventInfo({title: event._def.title, start: event._instance.range.start, end: event._instance.range.end, description: event._def.extendedProps.description, id: event.id})
       setEventInfo({title: event._def.title, start: event._instance.range.start, end: event._instance.range.end, description: event._def.extendedProps.description, id: event.id})
     }
     
     useEffect(() => {
       eventInfo && openModal()
     }, [eventInfo])
+
+
 
     const deleteEvent = (event) => {
         event.preventDefault()
@@ -123,10 +130,31 @@ const Calendar = () => {
         setIsOpen(false)               
     }
 
+
+
     const editEvent = (event) => {
+      event.preventDefault()
       let  newInfo = prompt("Description (optional):")
-      eventInfo['description'] = newInfo
-      setEventInfo(eventInfo)
+
+      const myEvent = events.filter(event => event.id === Number(eventInfo.id))[0]
+      myEvent.description = newInfo
+      
+      let newEvents = events.slice(0, events.length)
+
+      localStorage.setItem('events', JSON.stringify([{title: myEvent.title, start: myEvent.start, end: myEvent.end, description: myEvent.description, id: myEvent.id}]))
+      // localStorage.setItem('events', JSON.stringify(events))
+      setEventInfo({title: myEvent.title, start: Date(myEvent.start), end: Date(myEvent.end), description: myEvent.description, id: myEvent.id})
+      setEvents(newEvents)
+
+      // let newEvents = [{title: myEvent.title, start: myEvent.title, end: myEvent.end, id:  myEvent.id, description: newInfo}]
+
+
+      console.log(events)
+      console.log(localStorage['events'])
+
+
+
+      
     }
 
     const [modalIsOpen,setIsOpen] = useState(false);
