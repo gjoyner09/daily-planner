@@ -44,32 +44,36 @@ const Calendar = () => {
         localStorage.setItem('events', JSON.stringify(newEvents))
         setEvents(newEvents)
     }
+
+    const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
+    const validateHour = (hour) => {
+      return hour >=0 && hour <= 23 ? true : false
+    }
+    
+    const validateMinute = (minute) => {
+      return minute >= 0 && minute <= 59 ? true : false
+    }
+    
+    const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
+      console.log(startHour)
+      console.log(startMinute)
+      console.log(endHour)
+      console.log(endMinute)
+
+      if (startHour < endHour) {
+        return true
+      } else if (startHour > endHour) {
+        return false
+      } else if (startMinute < endMinute) {
+        return true
+      } else {
+        return false
+      }
+    }
     
     const handleDateClick = (arg) => { // bind with an arrow function
 
-        const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
         const name = prompt("Event name:")
-        
-        const validateHour = (hour) => {
-          return hour >=0 && hour <= 23 ? true : false
-        }
-        
-        const validateMinute = (minute) => {
-          return minute >= 0 && minute <= 59 ? true : false
-        }
-        
-        const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
-          if (startHour < endHour) {
-            return true
-          } else if (startHour > endHour) {
-            return false
-          } else if (startMinute < endMinute) {
-            return true
-          } else {
-            return false
-          }
-        }
-        
         
         if(name) {
           try {
@@ -107,6 +111,7 @@ const Calendar = () => {
     }
     
     const renderEventContent = ({event}) => {
+      console.log(events)
       setEventInfo({title: event._def.title, start: event._instance.range.start, end: event._instance.range.end, description: event._def.extendedProps.description, id: event.id})
     }
     
@@ -127,109 +132,86 @@ const Calendar = () => {
 
 
 
-    const editEvent = (event) => {
-      event.preventDefault()
-      let  newInfo = prompt("Description (optional):")
+    const editEvent = (event, str) => {
 
+      event.preventDefault()
       const myEvent = events.filter(event => event.id === Number(eventInfo.id))[0]
-      myEvent.description = newInfo
-      
       const newEvents = events.slice(0, events.length)
       const date = new Date()
       const timeZoneOffset = date.getTimezoneOffset()*60000
 
-      localStorage.setItem('events', JSON.stringify([{title: myEvent.title, start: myEvent.start, end: myEvent.end, description: myEvent.description, id: myEvent.id}]))
-      setEventInfo({title: myEvent.title, start: new Date(myEvent.start - timeZoneOffset), end: new Date(myEvent.end - timeZoneOffset), description: myEvent.description, id: myEvent.id})
-      setEvents(newEvents)
+
+      let title = eventInfo.title
+      let start = eventInfo.start
+      let end = eventInfo.end
+      let description = eventInfo.description
+      let hourStart = start.getUTCHours()
+      let minuteStart = start.getUTCMinutes()
+      let hourEnd = end.getUTCHours()
+      let minuteEnd = end.getUTCMinutes()
+
+      console.log(start)
 
 
-      // const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
-      //   console.log(eventInfo.start.getUTCHours().toString().length===1 ? '0'+eventInfo.start.getUTCHours().toString() : eventInfo.start.getUTCHours().toString())
-      //   console.log(eventInfo.start.getUTCMinutes().toString().length===1 ? '0'+eventInfo.start.getUTCMinutes().toString() : eventInfo.start.getUTCMinutes().toString())
-      //   console.log(eventInfo.start)
+      try {
 
-      //   const name = prompt("Event name:")
-        
-      //   const validateHour = (hour) => {
-      //     return hour >=0 && hour <= 23 ? true : false
-      //   }
-        
-      //   const validateMinute = (minute) => {
-      //     return minute >= 0 && minute <= 59 ? true : false
-      //   }
-        
-      //   const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
-      //     if (startHour < endHour) {
-      //       return true
-      //     } else if (startHour > endHour) {
-      //       return false
-      //     } else if (startMinute < endMinute) {
-      //       return true
-      //     } else {
-      //       return false
-      //     }
-      //   }
-        
-        
-      //   if(name) {
-      //     try {
-      //       let userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
-      //       let hourStart = Number(userStart.substring(0,2))
-      //       let minuteStart = Number(userStart.substring(3,5))
-      //       while (!userStart.match(timeFormat) || !validateHour(hourStart) || !validateMinute(minuteStart)) {
-      //           alert("Please enter a valid time in 24hr 'hh:mm' format")
-      //           userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
-      //           hourStart = Number(userStart.substring(0,2))
-      //           minuteStart = Number(userStart.substring(3,5))
-      //       } 
-            
-      //       let start = eventInfo.start.toString()
-      //       console.log(start)
-            
-      //       let userEnd = prompt("Enter the event end in 24hr 'hh:mm' format: ")
-      //       let hourEnd = Number(userEnd.substring(0,2))
-      //       let minuteEnd = Number(userEnd.substring(3,5))
-      //       while (!userEnd.match(timeFormat) || !validateHour(hourEnd) || !validateMinute(minuteEnd) || !startBeforeEnd(hourStart, minuteStart, hourEnd, minuteEnd)) {
-      //           alert("Please enter a valid time in 24hr 'hh:mm' format, ensuring that it is after the event start time")
-      //           userEnd = prompt("Enter the event start in 24hr 'hh:mm' format: ")
-      //           hourEnd = Number(userEnd.substring(0,2))
-      //           minuteEnd = Number(userEnd.substring(3,5))
-      //         }
-            
+        if (str==='title') {
 
-      //       let oldstart = (eventInfo.start.getUTCHours().toString().length===1 ? '0'+eventInfo.start.getUTCHours().toString() : eventInfo.start.getUTCHours().toString())
-      //       + ':' + (eventInfo.start.getUTCMinutes().toString().length===1 ? '0'+eventInfo.start.getUTCMinutes().toString() : eventInfo.start.getUTCMinutes().toString()) + ':00'
-      //       let oldend = (eventInfo.end.getUTCHours().toString().length===1 ? '0'+eventInfo.end.getUTCHours().toString() : eventInfo.end.getUTCHours().toString())
-      //       + ':' + (eventInfo.end.getUTCMinutes().toString().length===1 ? '0'+eventInfo.end.getUTCMinutes().toString() : eventInfo.end.getUTCMinutes().toString()) + ':00'
+          title = prompt("Event name:")
+          eventInfo.title = title
+          myEvent.title = title
 
-      //       console.log(oldstart)
-      //       console.log(oldend)
+        } else if (str==='start') {
 
-      //       let end = Date.parse(start.replace(oldend, userEnd + ":00"))
-      //       start = Date.parse(start.replace(oldstart, userStart + ":00"))
+          let userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+          hourStart = Number(userStart.substring(0,2))
+          minuteStart = Number(userStart.substring(3,5))
+          while (!userStart.match(timeFormat) || !validateHour(hourStart) || !validateMinute(minuteStart)) {
+              alert("Please enter a valid time in 24hr 'hh:mm' format")
+              userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+              hourStart = Number(userStart.substring(0,2))
+              minuteStart = Number(userStart.substring(3,5))
+          } 
+
+          eventInfo.start.setUTCHours(hourStart)
+          eventInfo.start.setUTCMinutes(minuteStart)
+          myEvent.start = Date.parse(eventInfo.start) + timeZoneOffset
+
+        } else if (str==='end') {
+
+          let userEnd = prompt("Enter the event end in 24hr 'hh:mm' format: ")
+          hourEnd = Number(userEnd.substring(0,2))
+          minuteEnd = Number(userEnd.substring(3,5))
+          while (!userEnd.match(timeFormat) || !validateHour(hourEnd) || !validateMinute(minuteEnd) || !startBeforeEnd(hourStart, minuteStart, hourEnd, minuteEnd)) {
+            alert("Please enter a valid time in 24hr 'hh:mm' format, ensuring that it is after the event start time")
+            userEnd = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+            hourEnd = Number(userEnd.substring(0,2))
+            minuteEnd = Number(userEnd.substring(3,5))
+          }
+
+          eventInfo.end.setUTCHours(hourEnd)
+          eventInfo.end.setUTCMinutes(minuteEnd)
+          myEvent.end = Date.parse(eventInfo.end) + timeZoneOffset
+
+        } else if (str==='description') {
+          description = prompt("Description (optional):")
+          eventInfo.title = description
+          myEvent.title = description
+        }
 
 
-      //       console.log(start)
-      //       console.log(end)
-      //       let description = prompt("Description (optional):")
-      //       eventInfo['title'] = name
-      //       // eventInfo.start = start
-      //       // eventInfo.end = end
-      //       eventInfo['description'] = description
-      //       console.log(eventInfo)
-        //     setEventInfo(eventInfo)
-        //     console.log(eventInfo)
-        //     console.log(events)
-        //   } catch(error) {
-        //     alert("Event not updated")
-        //   }
-        // }
+        localStorage.setItem('events', JSON.stringify(newEvents))
+        setEvents(newEvents)
 
- 
-        // setEventInfo(eventInfo)
+      } catch {
+        alert("Event not updated")
+      }
+
 
       
     }
+
+
 
     const [modalIsOpen,setIsOpen] = useState(false);
     function openModal() {
@@ -280,13 +262,20 @@ const Calendar = () => {
           contentLabel="Event"
         >
           <p>Title: {eventInfo && eventInfo.title}</p>
+          <Button onClick={(event => {editEvent(event, 'title')})}>Edit Title</Button>
+
           <p>Start: {eventInfo && ausDateStyle(eventInfo.start)}</p>
+          <Button onClick={(event => {editEvent(event, 'start')})}>Edit Start</Button>
+
           <p>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
+          <Button onClick={(event => {editEvent(event, 'end')})}>Edit End</Button>
+
           <p>Description: {eventInfo && eventInfo.description}</p>
+          <Button onClick={(event => {editEvent(event, 'description')})}>Edit Description</Button>
+
           <form>
             <Button onClick={deleteEvent}>Delete event</Button>
           </form>
-          <Button onClick={editEvent}>Edit event</Button>
           <Button onClick={closeModal}>Close window</Button>
         </Modal>
 
