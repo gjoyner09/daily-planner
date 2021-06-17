@@ -35,7 +35,6 @@ const Calendar = () => {
     const initialEvents = localStorage.getItem('events')
     const [events, setEvents] = useState(initialEvents ? JSON.parse(initialEvents) : [])
     const [eventInfo, setEventInfo] = useState(null)
-    const [currentEvent, setCurrentEvent] = useState(null)
     
     const addEvent = (event) => {
         const newEvents = [
@@ -108,10 +107,6 @@ const Calendar = () => {
     }
     
     const renderEventContent = ({event}) => {
-      console.log(event)
-      console.log(localStorage)
-      // setCurrentEvent(event)
-      // setEventInfo({title: event._def.title, start: event._instance.range.start, end: event._instance.range.end, description: event._def.extendedProps.description, id: event.id})
       setEventInfo({title: event._def.title, start: event._instance.range.start, end: event._instance.range.end, description: event._def.extendedProps.description, id: event.id})
     }
     
@@ -139,20 +134,99 @@ const Calendar = () => {
       const myEvent = events.filter(event => event.id === Number(eventInfo.id))[0]
       myEvent.description = newInfo
       
-      let newEvents = events.slice(0, events.length)
+      const newEvents = events.slice(0, events.length)
+      const date = new Date()
+      const timeZoneOffset = date.getTimezoneOffset()*60000
 
       localStorage.setItem('events', JSON.stringify([{title: myEvent.title, start: myEvent.start, end: myEvent.end, description: myEvent.description, id: myEvent.id}]))
-      // localStorage.setItem('events', JSON.stringify(events))
-      setEventInfo({title: myEvent.title, start: Date(myEvent.start), end: Date(myEvent.end), description: myEvent.description, id: myEvent.id})
+      setEventInfo({title: myEvent.title, start: new Date(myEvent.start - timeZoneOffset), end: new Date(myEvent.end - timeZoneOffset), description: myEvent.description, id: myEvent.id})
       setEvents(newEvents)
 
-      // let newEvents = [{title: myEvent.title, start: myEvent.title, end: myEvent.end, id:  myEvent.id, description: newInfo}]
+
+      // const timeFormat = /^\d{1,2}:\d{2}([ap]m)?$/;
+      //   console.log(eventInfo.start.getUTCHours().toString().length===1 ? '0'+eventInfo.start.getUTCHours().toString() : eventInfo.start.getUTCHours().toString())
+      //   console.log(eventInfo.start.getUTCMinutes().toString().length===1 ? '0'+eventInfo.start.getUTCMinutes().toString() : eventInfo.start.getUTCMinutes().toString())
+      //   console.log(eventInfo.start)
+
+      //   const name = prompt("Event name:")
+        
+      //   const validateHour = (hour) => {
+      //     return hour >=0 && hour <= 23 ? true : false
+      //   }
+        
+      //   const validateMinute = (minute) => {
+      //     return minute >= 0 && minute <= 59 ? true : false
+      //   }
+        
+      //   const startBeforeEnd = (startHour, startMinute, endHour, endMinute) => {
+      //     if (startHour < endHour) {
+      //       return true
+      //     } else if (startHour > endHour) {
+      //       return false
+      //     } else if (startMinute < endMinute) {
+      //       return true
+      //     } else {
+      //       return false
+      //     }
+      //   }
+        
+        
+      //   if(name) {
+      //     try {
+      //       let userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+      //       let hourStart = Number(userStart.substring(0,2))
+      //       let minuteStart = Number(userStart.substring(3,5))
+      //       while (!userStart.match(timeFormat) || !validateHour(hourStart) || !validateMinute(minuteStart)) {
+      //           alert("Please enter a valid time in 24hr 'hh:mm' format")
+      //           userStart = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+      //           hourStart = Number(userStart.substring(0,2))
+      //           minuteStart = Number(userStart.substring(3,5))
+      //       } 
+            
+      //       let start = eventInfo.start.toString()
+      //       console.log(start)
+            
+      //       let userEnd = prompt("Enter the event end in 24hr 'hh:mm' format: ")
+      //       let hourEnd = Number(userEnd.substring(0,2))
+      //       let minuteEnd = Number(userEnd.substring(3,5))
+      //       while (!userEnd.match(timeFormat) || !validateHour(hourEnd) || !validateMinute(minuteEnd) || !startBeforeEnd(hourStart, minuteStart, hourEnd, minuteEnd)) {
+      //           alert("Please enter a valid time in 24hr 'hh:mm' format, ensuring that it is after the event start time")
+      //           userEnd = prompt("Enter the event start in 24hr 'hh:mm' format: ")
+      //           hourEnd = Number(userEnd.substring(0,2))
+      //           minuteEnd = Number(userEnd.substring(3,5))
+      //         }
+            
+
+      //       let oldstart = (eventInfo.start.getUTCHours().toString().length===1 ? '0'+eventInfo.start.getUTCHours().toString() : eventInfo.start.getUTCHours().toString())
+      //       + ':' + (eventInfo.start.getUTCMinutes().toString().length===1 ? '0'+eventInfo.start.getUTCMinutes().toString() : eventInfo.start.getUTCMinutes().toString()) + ':00'
+      //       let oldend = (eventInfo.end.getUTCHours().toString().length===1 ? '0'+eventInfo.end.getUTCHours().toString() : eventInfo.end.getUTCHours().toString())
+      //       + ':' + (eventInfo.end.getUTCMinutes().toString().length===1 ? '0'+eventInfo.end.getUTCMinutes().toString() : eventInfo.end.getUTCMinutes().toString()) + ':00'
+
+      //       console.log(oldstart)
+      //       console.log(oldend)
+
+      //       let end = Date.parse(start.replace(oldend, userEnd + ":00"))
+      //       start = Date.parse(start.replace(oldstart, userStart + ":00"))
 
 
-      console.log(events)
-      console.log(localStorage['events'])
+      //       console.log(start)
+      //       console.log(end)
+      //       let description = prompt("Description (optional):")
+      //       eventInfo['title'] = name
+      //       // eventInfo.start = start
+      //       // eventInfo.end = end
+      //       eventInfo['description'] = description
+      //       console.log(eventInfo)
+        //     setEventInfo(eventInfo)
+        //     console.log(eventInfo)
+        //     console.log(events)
+        //   } catch(error) {
+        //     alert("Event not updated")
+        //   }
+        // }
 
-
+ 
+        // setEventInfo(eventInfo)
 
       
     }
