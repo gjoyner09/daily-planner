@@ -29,13 +29,10 @@ const CalendarPadding = styled.div`
   padding: 1rem;
 `
 
-
-
-const infoStyle = {
-  marginTop: '40px',
-  marginBottom: '40px'
-  
-}
+const InfoStyle = styled.div`
+  margin-top: 20px;
+  margin-bottom: 20px;
+`
 
 
 
@@ -234,8 +231,8 @@ const Calendar = () => {
 
         } else if (str==='description') {
           description = prompt("Description (optional):")
-          eventInfo.title = description
-          myEvent.title = description
+          eventInfo.description = description
+          myEvent.description = description
         }
 
 
@@ -275,56 +272,31 @@ const Calendar = () => {
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
-          style={{
-            overlay: {
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(255, 255, 255, 0.75)',
-              zIndex: 10
-            },
-            content: {
-              position: 'absolute',
-              top: '20%',
-              left: '30%',
-              right: '30%',
-              bottom: '15%',
-              border: '1px solid #ccc',
-              background: 'rgba(245, 245, 245)',
-              overflow: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              borderRadius: '10px',
-              outline: 'none',
-              padding: '20px',
-            }
-          }}
+          className='modal'
+          overlayClassName='overlayModal'
           contentLabel="Event"
         >
-          <div style={infoStyle}>
-            <p style={{margin: '5px'}}>Title: {eventInfo && eventInfo.title}</p>
-            <Button onClick={(event => {editEvent(event, 'title')})}>Edit Title</Button>
-          </div>
+          <InfoStyle>
+            <p style={{margin: '5px'}}><b>Title:</b> {eventInfo && eventInfo.title}</p>
+            <Button onClick={(event => {editEvent(event, 'title')})}>Edit</Button>
+          </InfoStyle>
 
-          <div style={infoStyle}>
-            <p style={{margin: '5px'}}>Start: {eventInfo && ausDateStyle(eventInfo.start)}</p>
-            <Button onClick={(event => {editEvent(event, 'start')})}>Edit Start</Button>
-          </div>
+          <InfoStyle>
+            <p style={{margin: '5px'}}><b>Start:</b> {eventInfo && ausDateStyle(eventInfo.start)}</p>
+            <Button onClick={(event => {editEvent(event, 'start')})}>Edit</Button>
+          </InfoStyle>
 
-          <div style={infoStyle}>
-            <p style={{margin: '5px'}}>End: {eventInfo && ausDateStyle(eventInfo.end)}</p>
-            <Button onClick={(event => {editEvent(event, 'end')})}>Edit End</Button>
-          </div>
+          <InfoStyle>
+            <p style={{margin: '5px'}}><b>End:</b> {eventInfo && ausDateStyle(eventInfo.end)}</p>
+            <Button onClick={(event => {editEvent(event, 'end')})}>Edit</Button>
+          </InfoStyle>
 
-          <div style={infoStyle}>
-            <p style={{margin: '5px'}}>Description: {eventInfo && eventInfo.description}</p>
-            <Button onClick={(event => {editEvent(event, 'description')})}>Edit Description</Button>
-          </div>
+          <InfoStyle>
+            <p style={{margin: '5px'}}><b>Description:</b> {eventInfo && eventInfo.description}</p>
+            <Button onClick={(event => {editEvent(event, 'description')})}>Edit</Button>
+          </InfoStyle>
 
-          <form>
-            <Button onClick={deleteEvent}>Delete event</Button>
-          </form>
+          <Button onClick={deleteEvent}>Delete event</Button>
           <Button onClick={closeModal}>Close window</Button>
         </Modal>
 

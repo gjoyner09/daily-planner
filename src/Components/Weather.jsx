@@ -158,13 +158,12 @@ const Weather = () => {
 
   // Get user's location on mount
   useEffect(() => {
-    !position &&
-      navigator.geolocation.getCurrentPosition((data) => {
-        setPosition({
-          latitude: data.coords.latitude,
-          longitude: data.coords.longitude,
-        });
+    navigator.geolocation.getCurrentPosition((data) => {
+      setPosition({
+        latitude: data.coords.latitude,
+        longitude: data.coords.longitude,
       });
+    });
   }, []);
 
   useEffect(() => {

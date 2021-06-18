@@ -85,7 +85,6 @@ const weatherImg = (cloudcover) => {
 
 // Get the text associated with the cloud cover data
 const cloudCover = (cloudcover) => {
-    console.log(cloudcover)
     switch (cloudcover) {
         case "cloudy":
             return "Cloudy"

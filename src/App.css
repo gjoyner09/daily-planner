@@ -18,10 +18,10 @@
 
 .modal {
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 38%;
   right: 38%;
-  bottom: 20%;
+  bottom: 10%;
   border: 1px solid #ccc;
   background: rgba(245, 245, 245);
   overflow: auto;
@@ -31,7 +31,7 @@
   padding: 20px;
 }  
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1400px) {
   .modal {
     position: absolute;
     left: 30%;
